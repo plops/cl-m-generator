@@ -126,7 +126,7 @@
 					  (0 1 0)
 					  (0 0 1)))))
 	      (setf C (.* A A)))
-	     
+	     (setf x (\\ A (col 1 1 1)))
 	     )
  	   ))
     (write-source (format nil "~a/source/~a" *path* *code-file*) code)))
