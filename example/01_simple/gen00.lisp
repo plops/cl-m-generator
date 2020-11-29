@@ -67,7 +67,17 @@
 	     y
 	     clear
 	     who
-	     ))
+	     )
+
+	    (do0
+	     (setf x (list 1 2 3 4 5 6)
+		   y (list 3 -1 2 4 5 1))
+	     (plot x y))
+
+	     (do0
+	     (setf x (slice 0 (/ pi 100) (* 2 pi))
+		   y (sin x))
+	     (plot x y)))
  	   ))
     (write-source (format nil "~a/source/~a" *path* *code-file*) code)))
 
