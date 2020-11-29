@@ -1,6 +1,6 @@
-_code_git_version="97f49ea247ee0ebdc9435355589ce053a65d0ba8";
+_code_git_version="833cfabffb0005345be7000aa6008ac5de9723c9";
 _code_repository="https://github.com/plops/cl-m-generator/tree/master/example/01_simple/source/run_00_start.m";
-_code_generation_time="22:20:15 of Sunday, 2020-11-29 (GMT+1)";
+_code_generation_time="22:28:04 of Sunday, 2020-11-29 (GMT+1)";
 ;
 ;
 x=((1)+(((2)*(3))));
@@ -58,4 +58,11 @@ w=[1; 4; 7; 10; 13];
 ;
 w2=transpose(v);
 ;
+;
+v(1:3)
+v(3:end)
+v(:)
+v(1:end)
+;
+A=[1 2 3;4 5 6;7 8 9;];
 ;

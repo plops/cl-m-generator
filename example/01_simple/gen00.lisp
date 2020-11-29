@@ -104,8 +104,19 @@
 	      (setf v (list 1 4 7 10 13)
 		    w (col 1 4 7 10 13)
 		    )
-	      (setf w2 (transpose v)))
-	     
+	      (setf w2 (transpose v))
+
+	      )
+	     (do_
+	      (v (slice 1 3))
+	      (v (slice 3 end))
+	      (v (slice))
+	      (v (slice 1 end))
+	      )
+
+	     (setf A (matrix (1 2 3)
+			     (4 5 6)
+			     (7 8 9)))
 
 	     )
  	   ))
