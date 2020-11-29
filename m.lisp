@@ -144,6 +144,60 @@ entry return-values contains a list of return values. "
 	     (push e new-body)))
     (values (reverse new-body) env)))
 
+
+(defun parse-defun (code emit)
+  ;; defun function-name lambda-list [declaration*] form*
+  (destructuring-bind (name lambda-list &rest body) (cdr code)
+    (multiple-value-bind (body env ) (consume-declare body) ;; py
+      (multiple-value-bind (req-param opt-param res-param
+				      key-param other-key-p
+				      aux-param key-exist-p)
+	  (parse-ordinary-lambda-list lambda-list)
+	(declare (ignorable req-param opt-param res-param
+			    key-param other-key-p aux-param key-exist-p))
+	(with-output-to-string (s)
+
+	  
+	  ;;                   return     params
+	  ;;                           name 
+	  ;;                          
+	  (format s "function ~@[~a=~] ~a ~a "
+		  
+		  (let ((r (gethash 'return-values env)))
+		    (if (< 1 (length r))
+			(emit `(list ,@r))
+			(if (car r)
+			    (car r)
+			    nil)))
+		  name
+		  
+		  (funcall emit `(paren
+				  ;; positional
+				  ,@(loop for p in req-param collect
+					 (format nil "~a ~a"
+						 (let ((type (gethash p env)))
+						   (if type
+						       (funcall emit type)
+						       (break "can't find type for positional parameter ~a in defun"
+							      p)))
+						 p))
+				  #+nil
+				  ,@(loop for ((keyword-name name) init supplied-p) in key-param collect
+					 (progn
+					   #+nil (format t "~s~%" (list (loop for k being the hash-keys in env using (hash-value v) collect
+									     (format nil "'~a'='~a'~%" k v)) :name name :keyword-name keyword-name :init init))
+					   (format nil "~a ~a ~@[~a~]"
+						   (let ((type (gethash name env)))
+						     (if type
+							 (funcall emit type)
+							 (break "can't find type for keyword parameter ~a in defun"
+								name)))
+						   name
+						   (when header-only ;; only in class definition
+						     (format nil "= ~a" (funcall emit init))))))
+				  )))
+	  (format s "~a" (funcall emit `(do0 ,@body))))))))
+
 (defun emit-m (&key code (str nil) (clear-env nil) (level 0))
 					;(format t "emit ~a ~a~%" level code)
   (when clear-env
@@ -201,7 +255,9 @@ entry return-values contains a list of return values. "
 			     (emit (cadr code))
 			     (mapcar #'(lambda (x) (emit `(indent ,x) 0)) (cddr code)))))
 	      (lambda (format nil "~a" (emit `(defun "" ,@(cdr code)))))
-	      
+
+	      (defun (parse-defun code #'emit))
+	      #+nil
 	      (defun (destructuring-bind (name lambda-list &rest body) (cdr code)
 		     (multiple-value-bind (req-param opt-param res-param
 						     key-param other-key-p aux-param key-exist-p)
