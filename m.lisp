@@ -330,39 +330,10 @@
 				     (do0
 				      ,@forms)))))
 
-	     #+nil (? (destructuring-bind (condition true-expr false-expr)
-		     (cdr code)
-		    (with-output-to-string (s)
-		      (format s "~a ? ~a : ~a"
-			      (emit `(paren ,condition))
-			      (emit `(paren ,true-expr))
-			      (emit `(paren ,false-expr))))))
-	      #+nil
-	      (import (destructuring-bind (args) (cdr code)
-			(if (listp args)
-			    (format nil "import ~a as ~a~%" (second args) (first args))
-			    (format nil "import ~a~%" args))))
-	      #+nil
-	      (imports (destructuring-bind (args) (cdr code)
-			 (format nil "~{~a~}" (mapcar #'(lambda (x) (emit `(import ,x))) args))))
-	      #+nil (with (destructuring-bind (form &rest body) (cdr code)
-			    ;; i should not use with
-			    (with-output-to-string (s)
-			      (format s "~a~a:~%~a"
-				      (emit "with ")
-				      (emit form)
-				      (emit `(do ,@body))))))
-	      #+nil
-	      (try (destructuring-bind (prog &rest exceptions) (cdr code)
-		     (with-output-to-string (s)
-		       (format s "~a:~%~a"
-			       (emit "try")
-			       (emit `(do ,prog)))
-		       (loop for e in exceptions do
-			    (destructuring-bind (form &rest body) e
-			      (format s "~a~%"
-				      (emit `(indent ,(format nil "except ~a:" (emit form)))))
-			      (format s "~a" (emit `(do ,@body))))))))
+	      (comments (let ((args (cdr code)))
+			  (format nil "~{% ~a~%~}" args)))
+	      (cell (let ((args (cdr code)))
+			  (format nil "~{%% ~a~%~}" args)))
 	      (t (destructuring-bind (name &rest args) code
 		   (let* ((positional (loop for i below (length args) until (keywordp (elt args i)) collect
 					   (elt args i)))
