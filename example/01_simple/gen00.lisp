@@ -77,7 +77,27 @@
 	     (do0
 	     (setf x (slice 0 (/ pi 100) (* 2 pi))
 		   y (sin x))
-	     (plot x y)))
+	     (plot x y)
+	     (xlabel (string "x=0:2\\pi"))
+	     (ylabel (string "sine of x"))
+	     (title (string "plot of sine function")))
+	     (do0
+	      (cell "multiple datasets in one plot")
+	      (setf x (slice 0 (/ pi 100) (* 2 pi))
+		    )
+	      ,(let ((l `((y1 (* 2 (cos x)))
+					 (y2 (cos x))
+					 (y3 (* .5 (cos x))))))
+		`(do0
+		  ,@(loop for (e f) in l
+			  collect
+			  `(setf ,e ,f))
+		  (plot x y1 (string "--")
+			x y2 (string "-")
+			x y3 (string ":"))
+		  (xlabel (string "0 \\leq x \\leq 2\\pi"))
+		  (ylabel (string "cosinus functions"))
+		  (legend ,@(mapcar #'(lambda (x) `(string ,(emit-m :code (second x)))) l))))))
  	   ))
     (write-source (format nil "~a/source/~a" *path* *code-file*) code)))
 
