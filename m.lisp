@@ -37,6 +37,54 @@
 #+nil
 (beautify-source '(setf a 3))
 
+(defun print-sufficient-digits-f32 (f)
+  "print a single floating point number as a string with a given nr. of                                                                                                                                             
+  digits. parse it again and increase nr. of digits until the same bit                                                                                                                                              
+  pattern."
+    (let* ((a f)
+           (digits 1)
+           (b (- a 1)))
+      (unless (= a 0)
+	(loop while (and (< 1e-6 (/ (abs (- a b))
+				    (abs a)))
+			 (< digits 30))
+           do
+             (setf b (read-from-string (format nil "~,v,,,,,'eG"
+					;"~,vG"
+					       digits a
+					       )))
+             (incf digits)))
+					;(format nil "~,vG" digits a)
+      ;(format nil "~,v,,,,,'eGf" digits a)
+      (let ((str
+	     (format nil "~,v,,,,,'eG" digits a)))
+	(format nil "~af" (string-trim '(#\Space) str))
+	#+nil
+	(if (find #\e str)
+	    str
+	    (format nil "~af" (string-trim '(#\Space) str))))))
+
+(defun print-sufficient-digits-f64 (f)
+  "print a double floating point number as a string with a given nr. of                                                                                                                                             
+  digits. parse it again and increase nr. of digits until the same bit                                                                                                                                              
+  pattern."
+
+  (let* ((a f)
+         (digits 1)
+         (b (- a 1)))
+    (unless (= a 0)
+      (loop while (and (< 1d-12
+			  (/ (abs (- a b))
+			     (abs a))
+			  )
+		       (< digits 30)) do
+           (setf b (read-from-string (format nil "~,vG" digits a)))
+	   (incf digits)))
+    ;(format t "~,v,,,,,'eG~%" digits a)
+    (format nil "~,v,,,,,'eG" digits a)
+    ;(substitute #\e #\d (format nil "~,vG" digits a))
+    ))
+#+nil
 (defun print-sufficient-digits-f64 (f)
   "print a double floating point number as a string with a given nr. of
   digits. parse it again and increase nr. of digits until the same bit
