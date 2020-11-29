@@ -127,7 +127,15 @@
 					  (0 0 1)))))
 	      (setf C (.* A A)))
 	     (setf x (\\ A (col 1 1 1)))
+
+	     (do0
+	      (cell "functions")
+	      (defun myadd (a b)
+		(declare (values c d))
+		(setf c (+ a b)
+		      d (- a b))))
 	     )
+	  
  	   ))
     (write-source (format nil "~a/source/~a" *path* *code-file*) code)))
 

@@ -165,7 +165,7 @@ entry return-values contains a list of return values. "
 		  
 		  (let ((r (gethash 'return-values env)))
 		    (if (< 1 (length r))
-			(emit `(list ,@r))
+			(funcall emit `(list ,@r))
 			(if (car r)
 			    (car r)
 			    nil)))
@@ -174,7 +174,8 @@ entry return-values contains a list of return values. "
 		  (funcall emit `(paren
 				  ;; positional
 				  ,@(loop for p in req-param collect
-					 (format nil "~a ~a"
+					  (format nil "~a" p)
+					 #+nil (format nil "~a ~a"
 						 (let ((type (gethash p env)))
 						   (if type
 						       (funcall emit type)
@@ -196,7 +197,7 @@ entry return-values contains a list of return values. "
 						   (when header-only ;; only in class definition
 						     (format nil "= ~a" (funcall emit init))))))
 				  )))
-	  (format s "~a" (funcall emit `(do0 ,@body))))))))
+	  (format s "~%~a~%end~%" (funcall emit `(do0 ,@body))))))))
 
 (defun emit-m (&key code (str nil) (clear-env nil) (level 0))
 					;(format t "emit ~a ~a~%" level code)

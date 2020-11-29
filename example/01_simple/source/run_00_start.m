@@ -1,6 +1,6 @@
-_code_git_version="0e5a4a043f760668f184e60917bf9624a1ac6b55";
+_code_git_version="7067c8d9dc59e7ab939b82788baebda63dca5020";
 _code_repository="https://github.com/plops/cl-m-generator/tree/master/example/01_simple/source/run_00_start.m";
-_code_generation_time="22:38:43 of Sunday, 2020-11-29 (GMT+1)";
+_code_generation_time="22:57:39 of Sunday, 2020-11-29 (GMT+1)";
 ;
 ;
 x=((1)+(((2)*(3))));
@@ -76,4 +76,12 @@ C=((A).*(A));
 ;
 ;
 x=((A)\([1; 1; 1]));
+;
+%% functions
+;
+function [c, d]= myadd (a, b) 
+ c=((a)+(b));
+ d=((a)-(b));
+end
+
 ;
