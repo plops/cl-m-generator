@@ -273,14 +273,19 @@
 		   (format nil "((~a)/(~a))"
 			   (emit (first args))
 			   (emit (second args)))))
+	      (./ (let ((args (cdr code)))
+		   (format nil "((~a)./(~a))"
+			   (emit (first args))
+			   (emit (second args)))))
 	      (^ (let ((args (cdr code)))
 		    (format nil "((~a)^(~a))"
 			    (emit (first args))
 			    (emit (second args)))))
-	      (// (let ((args (cdr code)))
-		    (format nil "((~a)//(~a))"
+	      (.^ (let ((args (cdr code)))
+		    (format nil "((~a).^(~a))"
 			    (emit (first args))
 			    (emit (second args)))))
+	      
 	      (% (let ((args (cdr code)))
 		   (format nil "((~a)%(~a))"
 			   (emit (first args))
