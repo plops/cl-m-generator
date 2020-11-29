@@ -5,9 +5,9 @@
 
 
 (defun write-source (name code &optional (dir (user-homedir-pathname)))
-  (let* ((fn (merge-pathnames (format nil "~a.js" name)
+  (let* ((fn (merge-pathnames (format nil "~a.m" name)
 			      dir))
-	(code-str (emit-js
+	(code-str (emit-m
 		   :clear-env t
 		   :code code))
 	(fn-hash (sxhash fn))
@@ -257,8 +257,8 @@
 		   (format nil "((~a)/(~a))"
 			   (emit (first args))
 			   (emit (second args)))))
-	      (** (let ((args (cdr code)))
-		    (format nil "((~a)**(~a))"
+	      (^ (let ((args (cdr code)))
+		    (format nil "((~a)^(~a))"
 			    (emit (first args))
 			    (emit (second args)))))
 	      (// (let ((args (cdr code)))

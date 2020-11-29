@@ -26,7 +26,7 @@
 		  (string ,(let ((str (with-output-to-string (s)
 					(sb-ext:run-program "/usr/bin/git" (list "rev-parse" "HEAD") :output s))))
 			     (subseq str 0 (1- (length str)))))
-		  _code_repository (string ,(format nil "https://github.com/plops/cl-py-generator/tree/master/example/29_ondrejs_challenge/source/run_00_start.py")
+		  _code_repository (string ,(format nil "https://github.com/plops/cl-m-generator/tree/master/example/01_simple/source/run_00_start.m")
 					   )
 
 		  _code_generation_time
@@ -43,7 +43,19 @@
 			      month
 			      date
 			      (- tz)))))
-		 ))
+		 )
+
+	    (do0
+	     (setf x (+ 1 (* 2 3)))
+	     (space format short)
+	     (setf y (+ (/ 1 (+ 2 (^ 3 2)))
+			(* (/ 4 5)
+			   (/ 6 7))))
+	     (space format long)
+	     y
+	     clear
+	     who
+	     ))
  	   ))
     (write-source (format nil "~a/source/~a" *path* *code-file*) code)))
 
