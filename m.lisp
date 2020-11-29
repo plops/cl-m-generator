@@ -192,10 +192,13 @@
 		       (declare (ignorable req-param opt-param res-param
 					   key-param other-key-p aux-param key-exist-p))
 		       (with-output-to-string (s)
-			 ;; function bla (para) {
-			 ;; function bla (para, ...rest) {
-			 ;; function bla ({ from = 0, to = this.length } = {}) {
-			 (format s "~a~a"
+			 ;; function add (a, b)
+			 ;;   expression;
+			 ;; end
+			 ;; function res = add(a,b)
+			 ;; function [c,d] = add(a,b)
+			 
+			 (format s "function ~a~a"
 				 name
 				 (emit `(paren ,@(append req-param
 							 (when key-param
@@ -208,9 +211,9 @@
 								   "{}")))
 							 (when res-param
 							   (list (format nil "...~a" res-param)))))))
-			 (format s "{~a}" (emit `(do ,@body)))))))
-	      (in (destructuring-bind (a b) (cdr code)
-		    (format nil "(~a in ~a)" (emit a) (emit b))))
+			 (format s "~a" (emit `(do ,@body)))
+			 (format s "end")))))
+	   
 	      (= (destructuring-bind (a b) (cdr code)
 		   (format nil "~a=~a" (emit a) (emit b))))
 	      (incf (destructuring-bind (a b) (cdr code)
@@ -224,42 +227,10 @@
 					      (let ((a (elt args i))
 						    (b (elt args (+ 1 i))))
 						`(= ,a ,b))))))))
-	      (let-decl (destructuring-bind (var init-form) (cdr code)
-			  (format nil "let ~a"
-				  (emit `(statement (setf ,var ,init-form))))))
-	      (var-decl (destructuring-bind (var init-form) (cdr code)
-			  (format nil "var ~a"
-				  (emit `(statement (setf ,var ,init-form))))))
-	      (const-decl (destructuring-bind (var init-form) (cdr code)
-			  (format nil "const ~a"
-				  (emit `(statement (setf ,var
-							  ,init-form))))))
-	      ;; global, don't enclose in function
-	      (let (destructuring-bind (decls &rest body) (cdr code)
-		     (format nil "~a"
-			     (emit `(statement
-				     ,@(loop for d in decls collect
-					    (destructuring-bind (name val &key (type 'let)) d
-					      (ecase type
-						(let `(let-decl ,name ,val))
-						(var `(var-decl ,name ,val))
-						(const `(const-decl ,name ,val))
-						(t (break "unknown type in let")))))
-				     ,@body)))))
-	      (let-l (destructuring-bind (decls &rest body) (cdr code)
-		     (format nil "~a"
-			     (emit `(statement ((paren
-						 (lambda ()
-						   ,@(loop for d in decls collect
-							  (destructuring-bind (name val &key (type 'let)) d
-							    (ecase type
-							      (let `(let-decl ,name ,val))
-							      (var `(var-decl ,name ,val))
-							      (const `(const-decl ,name ,val))
-							      (t (break "unknown type in let")))))
-						   ,@body))))))))
+	   
+	   
 	      (aref (destructuring-bind (name &rest indices) (cdr code)
-		      (format nil "~a[~{~a~^,~}]" (emit name) (mapcar #'emit indices))))
+		      (format nil "~a(~{~a~^,~})" (emit name) (mapcar #'emit indices))))
 	      (slice (let ((args (cdr code)))
 		       (if (null args)
 			   (format nil ":")
@@ -304,9 +275,8 @@
 		    (format nil "(~{(~a)~^ || ~})" (mapcar #'emit
 							   args))))
 	      (not (let ((args (cdr code)))
-		    (format nil "(!(~a))" (emit (car args)))))
+		    (format nil "(~~(~a))" (emit (car args)))))
 	      (string (format nil "\"~a\"" (cadr code)))
-	      (string-backtick (format nil "`~a`" (cadr code)))
 	      (return_ (format nil "return ~a" (emit (caadr code))))
 	      (return (let ((args (cdr code)))
 			(format nil "~a" (emit `(return_ ,args)))))
@@ -360,7 +330,7 @@
 				     (do0
 				      ,@forms)))))
 
-	      (? (destructuring-bind (condition true-expr false-expr)
+	     #+nil (? (destructuring-bind (condition true-expr false-expr)
 		     (cdr code)
 		    (with-output-to-string (s)
 		      (format s "~a ? ~a : ~a"
