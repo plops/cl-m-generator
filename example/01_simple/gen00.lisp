@@ -55,6 +55,18 @@
 	     y
 	     clear
 	     who
+	     )
+
+	    (do_
+	     (setf x (+ 1 (* 2 3)))
+	     (space format short)
+	     (setf y (+ (/ 1 (+ 2 (^ 3 2)))
+			(* (/ 4 5)
+			   (/ 6 7))))
+	     (space format long)
+	     y
+	     clear
+	     who
 	     ))
  	   ))
     (write-source (format nil "~a/source/~a" *path* *code-file*) code)))

@@ -146,6 +146,10 @@
 			   ;; like do but surrounds forms with braces.
 			   (format s "{~{~&~a~}~&}" (mapcar #'(lambda (x) (emit `(indent (do0 ,x)) 1)) (cdr code)))))
 	      (do0 (with-output-to-string (s)
+		     (format s "~a;~%~{~a;~%~}"
+			     (emit (cadr code))
+			     (mapcar #'(lambda (x) (emit `(indent ,x) 0)) (cddr code)))))
+	      (do_ (with-output-to-string (s)
 		     (format s "~a~%~{~a~%~}"
 			     (emit (cadr code))
 			     (mapcar #'(lambda (x) (emit `(indent ,x) 0)) (cddr code)))))
