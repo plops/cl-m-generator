@@ -114,10 +114,18 @@
 	      (v (slice 1 end))
 	      )
 
-	     (setf A (matrix (1 2 3)
-			     (4 5 6)
-			     (7 8 9)))
-
+	     (do0
+	      (cell "matrix example")
+	      (setf A (matrix (1 2 3)
+			      (4 5 6)
+			      (7 8 9)))
+	      (setf (list m n)
+		    (size A))
+	      (setf B (matrix (A (* 10 A))
+			      (-A (matrix (1 0 0)
+					  (0 1 0)
+					  (0 0 1))))))
+	     
 	     )
  	   ))
     (write-source (format nil "~a/source/~a" *path* *code-file*) code)))

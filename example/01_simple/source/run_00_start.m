@@ -1,6 +1,6 @@
-_code_git_version="833cfabffb0005345be7000aa6008ac5de9723c9";
+_code_git_version="b858b59dd6e7b6e368a798607fb344bfd5f5b689";
 _code_repository="https://github.com/plops/cl-m-generator/tree/master/example/01_simple/source/run_00_start.m";
-_code_generation_time="22:28:04 of Sunday, 2020-11-29 (GMT+1)";
+_code_generation_time="22:33:03 of Sunday, 2020-11-29 (GMT+1)";
 ;
 ;
 x=((1)+(((2)*(3))));
@@ -64,5 +64,12 @@ v(3:end)
 v(:)
 v(1:end)
 ;
+%% matrix example
+;
 A=[1 2 3;4 5 6;7 8 9;];
+;
+[m, n]=size(A);
+;
+B=[A ((10)*(A));-A [1 0 0;0 1 0;0 0 1;];];
+;
 ;

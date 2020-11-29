@@ -131,7 +131,7 @@
 			(with-output-to-string (s)
 			  (format s "[")
 			  (loop for r in rows do
-			    (format s "~{~a~^ ~};" r))
+			    (format s "~{~a~^ ~};" (mapcar #'emit r)))
 			  (format s "]"))))
 	      (dict (let* ((args (cdr code)))
 		      (let ((str (with-output-to-string (s)
