@@ -97,7 +97,17 @@
 			x y3 (string ":"))
 		  (xlabel (string "0 \\leq x \\leq 2\\pi"))
 		  (ylabel (string "cosinus functions"))
-		  (legend ,@(mapcar #'(lambda (x) `(string ,(emit-m :code (second x)))) l))))))
+		  (legend ,@(mapcar #'(lambda (x) `(string ,(emit-m :code (second x)))) l))
+		  (axis (list 0 (* 2 pi) -3 3)))))
+
+	     (do0
+	      (setf v (list 1 4 7 10 13)
+		    w (col 1 4 7 10 13)
+		    )
+	      (setf w2 (transpose v)))
+	     
+
+	     )
  	   ))
     (write-source (format nil "~a/source/~a" *path* *code-file*) code)))
 
