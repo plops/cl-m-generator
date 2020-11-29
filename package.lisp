@@ -1,4 +1,4 @@
-(defpackage :cl-js-generator
+(defpackage :cl-m-generator
   (:use #:cl
 	#:alexandria)
   (:export

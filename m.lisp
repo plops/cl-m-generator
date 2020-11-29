@@ -1,44 +1,4 @@
-;; sudo pacman -S python-jsbeautifier
-;; https://blog.glyphobet.net/essay/2557/
-;; https://jlongster.com/Outlet--My-Lisp-to-Javascript-Experiment
-;; https://github.com/jlongster/outlet
-;; https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures
-
-;; lambda
-;; setf
-;; 10 use this to define def
-;; 20 missing arguments are undefined, extra are in 'arguments' object
-
-;; 30 semicolon separates statements
-
-;; 40 global scope is shared between all js files (use anonymous function
-;; to separate). in js the single way to create scope is a new
-;; function
-
-;; 50 variables can be defined anywhere but the declaration is 'hoisted'
-;; to the beginning -> i think i should expose this
-
-;; 60 assign methods to object's prototype, don't forget new!
-
-;; 70 the keyword 'this' usually refers to the object before the point but
-;; can be changed with apply and call; the global object of the browser is called `window`
-
-;; http://asmjs.org/spec/latest/
-
-;; https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
-;; communication to webworker https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage
-
-;; https://developer.mozilla.org/en-US/docs/Web/JavaScript/A_re-introduction_to_JavaScript
-
-;; 11 lambdas can have a name for recursive function calls
-
-;; 80 rest arguments look like this: `function trivialNew(constructor, ...args) {`
-
-;; 90 i think i have to introduce let (using call to unnamed lambda)
-
-;; 100 the user program must be in package cl-js-generator (or i have to export all possible symbols)
-
-(in-package #:cl-js-generator)
+(in-package #:cl-m-generator)
 (setf (readtable-case *readtable*) :invert)
 
 (defparameter *file-hashes* (make-hash-table))
@@ -67,7 +27,7 @@
 
 
 (defun beautify-source (code)
-  (let* ((code-str (emit-js
+  (let* ((code-str (emit-m
 		   :clear-env t
 		   :code code)))
     (with-input-from-string (s code-str)
