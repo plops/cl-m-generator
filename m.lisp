@@ -23,16 +23,18 @@
 			  :if-exists :supersede
 			  :if-does-not-exist :create)
 	 (write-sequence code-str s))
-       (sb-ext:run-program "/usr/bin/js-beautify" (list "-r" (namestring fn)))))))
+       ;(sb-ext:run-program "/usr/bin/js-beautify" (list "-r" (namestring fn)))
+       ))))
 
-
+#+nil
 (defun beautify-source (code)
   (let* ((code-str (emit-m
 		   :clear-env t
 		   :code code)))
     (with-input-from-string (s code-str)
       (with-output-to-string (o)
-	(sb-ext:run-program "/usr/bin/js-beautify" (list "-i") :input s :output o :wait t)))))
+	(sb-ext:run-program "/usr/bin/js-beautify" (list "-i") :input s :output o :wait t)
+	))))
 
 #+nil
 (beautify-source '(setf a 3))
@@ -106,58 +108,13 @@
 
 
 
-
-
-(defun test ()
- (loop for e in `((dot bla woa fup)
-		  (setf a 3)
-		  (do (setf a 3
-			    b 4))
-		  (do bla
-		      fuoo)
-		  (dict (a 1) (b 2))
-		  (def bla (foo) (setf x 1))
-		  (def bla (foo &key (bla 3) (foo 4)) (setf x 1))
-		  (def bla (foo &rest rest) (setf x 1))
-		  (lambda (x y) (+ x y))
-		  (if (== a 3)
-		      (setf b 3)
-		      (setf q 3))
-		  (if (== a 4)
-		      (setf b 4))
-		  (for-in (p alph) (setf a p))
-		  (for-of (o (foo)) (setf o 3))
-		  (dotimes (i n) (setf a i))
-		  (let-decl a 3)
-		  (var-decl b 3)
-		  (const-decl c 3)
-		  (let ((a 3))
-		    )
-		  (dot (bla)
-		       (then
-			(lambda ()
-			  (return
-			    (=== a 3)))))
-		  (getUserMedia :video true :audio false)
-		  )
-      and i from 0
-    do
-      (format t "~d:~%~a~%" i
-	      
-	      (emit-js :code e)
-	      ;(beautify-source e)
-	      )))
-
-#+nil
-(test)
-
-(defun emit-js (&key code (str nil) (clear-env nil) (level 0))
+(defun emit-m (&key code (str nil) (clear-env nil) (level 0))
 					;(format t "emit ~a ~a~%" level code)
   (when clear-env
     (setf *env-functions* nil
 	  *env-macros* nil))
   (flet ((emit (code &optional (dl 0))
-	   (emit-js :code code :clear-env nil :level (+ dl level))))
+	   (emit-m :code code :clear-env nil :level (+ dl level))))
     (if code
 	(if (listp code)
 	    (case (car code)
@@ -181,10 +138,7 @@
 			      (emit (cadr code))))
 	      (statement (with-output-to-string (s)
 			   (format s "~{~a;~%~}" (mapcar #'(lambda (x) (emit `(indent ,x))) (cdr code)))))
-	      (new
-		   ;; new arg
-		   (let ((arg (cadr code)))
-		     (format nil "new ~a" (emit arg))))
+	      
 	      (do (with-output-to-string (s)
 		    (format s "~{~a~}" (mapcar #'(lambda (x) (emit `(statement ,x) 1)) (cdr code)))))
 	      (progn (with-output-to-string (s)
@@ -221,10 +175,16 @@
 							 (when res-param
 							   (list (format nil "...~a" res-param)))))))
 			 (format s "{~a}" (emit `(do ,@body)))))))
-	      (defclass (let ((args (cdr code)))
-			  (destructuring-bind (name &rest rest) args
-			   (emit `(space ,(format nil "class ~a" name)
-				    (progn ,@rest))))))
+	      #+nil (defclass (let ((args (cdr code)))
+				;; classdef <name>
+				;; properties (Access=private, Constant)
+				;; bla = 'fub';
+				;; end
+				;; methods (Static = true)
+				;; functin bla(a,b)
+				(destructuring-bind (name &rest rest) args
+				  (emit `(space ,(format nil "class ~a" name)
+						(progn ,@rest))))))
 	      (defmethod (destructuring-bind (name lambda-list &rest body) (cdr code)
 		     (multiple-value-bind (req-param opt-param res-param
 						     key-param other-key-p aux-param key-exist-p)
@@ -381,14 +341,20 @@
 			  (format s "~a}" (emit `(do ,@body))))))
 
 	      (if (destructuring-bind (condition true-statement &optional false-statement) (cdr code)
+		    ;; if <condition>
+		    ;;   true;
+		    ;; else
+		    ;;   false;
+		    ;; end
 		    (with-output-to-string (s)
-		      (format s "if ( ~a )~%{~a}"
+		      (format s "if  ~a ~%~a"
 			      (emit condition)
 			      (emit `(do ,true-statement)))
 		      (when false-statement
-			(format s "~a~%{~a}"
+			(format s "~a~%~a"
 				(emit `(indent "else"))
-				(emit `(do ,false-statement)))))))
+				(emit `(do ,false-statement))))
+		      (format s "end~%"))))
 	      (when (destructuring-bind (condition &rest forms) (cdr code)
 			  (emit `(if ,condition
 				     (do0
